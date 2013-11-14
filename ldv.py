@@ -65,13 +65,16 @@ def quantities(fi, fo=None, rot=0, off=(), debug=False):
             
             u = lda[:,0]*a1 + lda[:,1]*b1
             v = lda[:,0]*a2 + lda[:,1]*b2
-            
             U = np.mean((u**2 + v**2)**0.5)
             
+            u = u - u.mean() # ubar, vbar
+            v = v - v.mean()
+
             k = (2*(u*u).mean()**0.5 + (v*v).mean()**0.5)/2
             uvbar = np.abs((u*v).mean())**0.5
 
             return pos, U, k, uvbar
+        
     fl = sorted(glob.glob(fi))
     if not fl:
         raise IOError(2, 'No such file or directory' % fi)
