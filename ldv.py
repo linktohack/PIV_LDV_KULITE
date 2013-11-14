@@ -74,7 +74,7 @@ def quantities(fi, rn=None, fo=None, rot=0, off=(), debug=False):
                 return pos, k, uvbar
     
     if rn is None:
-        return qt(fi, rot, off, debug)
+        return _qt(fi, rot, off, debug)
     else:
         pos = []
         k = []
@@ -100,5 +100,3 @@ def quantities(fi, rn=None, fo=None, rot=0, off=(), debug=False):
             np.save(fo, [pos, k, uvbar])
 
         return pos, k, uvbar
-                
-
