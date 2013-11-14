@@ -43,7 +43,7 @@ def datarate(fn, rn=None, debug=False):
         return pos, dr
 
 
-def quantities(fi, rn=None, fo=None, rot=0, off=(), debug=True):
+def quantities(fi, rn=None, fo=None, rot=0, off=(), debug=False):
     """ Calculate statistical quantities of a file name fi or a set of file with range rn
     In that case, an optional ouput file can be set to export the data"""
     def _qt(fn, rot, off, debug):
