@@ -32,13 +32,13 @@ def datarate(fn, rn=None, debug=False):
             fn_ = fn % i
             if os.path.exists(fn_):
                 if debug:
-                    print fn1
+                    print fn_
                 pos_, dr_ = _dr(fn_)
                 pos.append(pos_)
                 dr.append(dr_)
             else:
                 if debug:
-                    print '-', fn1
+                    print '-', fn_
                 
         return pos, dr
 
