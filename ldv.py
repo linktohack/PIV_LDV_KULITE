@@ -18,28 +18,29 @@ def datarate(fn, rn=None, debug=False):
             last = np.array(lastline.strip().split('\t')).astype(np.float64)
 
             dr = (last[0] - first[0])/(last[1] - first[1])*1000   
-            return dr, pos
+            return pos, dr 
     
     if rn is None:
         if debug:
             print fn
         return _dr(fn)
     else:
-        dr = []
         pos = []
+        dr = []
+
         for i in xrange(rn[0], rn[1]):
             fn_ = fn % i
             if os.path.exists(fn_):
                 if debug:
                     print fn1
-                dr_, pos_ = _dr(fn_)
-                dr.append(dr_)
+                pos_, dr_ = _dr(fn_)
                 pos.append(pos_)
+                dr.append(dr_)
             else:
                 if debug:
                     print '-', fn1
                 
-        return dr, pos
+        return pos, dr
 
 
 def quantities(fi, rn=None, fo=None, rot=0, off=(), debug=True):
