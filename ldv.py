@@ -70,19 +70,22 @@ def quantities(fi, rn=None, fo=None, rot=0, off=(), debug=True):
                 k = (2*(u*u).mean()**0.5 + (v*v).mean()**0.5)/2
                 uvbar = np.abs((u*v).mean())**0.5
     
-                return k, uvbar
+                return pos, k, uvbar
     
     if rn is None:
         return qt(fi, rot, off, debug)
     else:
+        pos = []
         k = []
         uvbar = []
+
         for i in xrange(rn[0], rn[1]):
             fn_ = fi % i
             if os.path.exists(fn_):
                 if debug:
                     print fn_
-                k_, uvbar_ = _qt(fn_, rot, off, debug)
+                pos_, k_, uvbar_ = _qt(fn_, rot, off, debug)
+                pos.append(pos_)
                 k.append(k_)
                 uvbar.append(uvbar_)
             else:
@@ -93,8 +96,8 @@ def quantities(fi, rn=None, fo=None, rot=0, off=(), debug=True):
             po = fo[fo.rfind('/')]
             if not os.path.exists(po):
                 os.makedirs(po)
-            np.save(fo, [k, uvbar])
-            
-        return k, uvbar
+            np.save(fo, [pos, k, uvbar])
+
+        return pos, k, uvbar
                 
 
