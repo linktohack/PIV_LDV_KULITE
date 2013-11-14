@@ -66,29 +66,31 @@ def quantities(fi, fo=None, rot=0, off=(), debug=False):
             u = lda[:,0]*a1 + lda[:,1]*b1
             v = lda[:,0]*a2 + lda[:,1]*b2
             
-            U = (u**2 + v**2)**0.5
+            U = np.mean((u**2 + v**2)**0.5)
             
             k = (2*(u*u).mean()**0.5 + (v*v).mean()**0.5)/2
             uvbar = np.abs((u*v).mean())**0.5
 
-            return pos, k, uvbar
+            return pos, U, k, uvbar
     fl = sorted(glob.glob(fi))
     if not fl:
         raise IOError(2, 'No such file or directory' % fi)
     if len(fl) < 2:
         if debug:
             print fl[0]
-        pos, k, uvbar = _qt(fl[0], rot, off, debug)
+        pos, U, k, uvbar = _qt(fl[0], rot, off, debug)
     else:
         pos = []
+        U = []
         k = []
         uvbar = []
 
         for fn_ in fl:
             if debug:
                 print fn_
-            pos_, k_, uvbar_ = _qt(fn_, rot, off, debug)
+            pos_, U_, k_, uvbar_ = _qt(fn_, rot, off, debug)
             pos.append(pos_)
+            U.append(U_)
             k.append(k_)
             uvbar.append(uvbar_)
         
@@ -96,6 +98,6 @@ def quantities(fi, fo=None, rot=0, off=(), debug=False):
         po = fo[:fo.rfind('/')]
         if not os.path.exists(po):
             os.makedirs(po)
-        np.save(fo, [pos, k, uvbar])
+        np.save(fo, [pos, U, k, uvbar])
 
-    return pos, k, uvbar
+    return pos, U, k, uvbar
