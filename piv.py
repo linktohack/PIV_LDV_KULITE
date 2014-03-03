@@ -13,14 +13,16 @@ def piv_to_im(piv):
 
     return im1, im2
 
-def piv_mean_rms(fn):
+def piv_mean_rms(fn, debug=False):
     fp = sorted(glob.glob(fn))
 
     piv1 = np.empty([len(fp), 65536])
     piv2 = np.empty([len(fp), 65536])
 
     for i in xrange(len(fp)):
-        print fp[i]
+        if debug:
+            if (i-1) % 10 == 0:
+                print fp[i]
         piv1[i,:], piv2[i,:] = np.loadtxt(fp[i], dtype=np.float32, usecols=(2,3), unpack=True)
 
     pivm1 = piv1.mean(axis=0)
@@ -38,3 +40,5 @@ def piv_mean_rms(fn):
     repivrms = np.concatenate([pos, pivrms1.reshape((65536,1)), pivrms2.reshape((65536,1))], axis=1)
 
     return repivm, repivrms
+
+# vim:set ts=4 sw=4:
