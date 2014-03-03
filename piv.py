@@ -56,7 +56,7 @@ def piv_filter_n_sigma(piv, pm, pr, n=3, debug=False):
 
         for i in xrange(piv.shape[0]):
             finished = False
-            if i == r[-1]:
+            if i == piv.shape[0] - 1:
                 finish = True
 
             X = (i, piv[i,j])
