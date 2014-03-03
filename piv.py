@@ -41,4 +41,64 @@ def piv_mean_rms(fn, debug=False):
 
     return repivm, repivrms
 
+def piv_filter_n_sigma(piv, pm, pr, n=3, debug=False):
+    """Filter the signal by n(three) sigma"""
+    errors_count = np.zeros(piv.shape[0], dtype=np.int32)
+
+    for j in xrange(piv.shape[1]):
+        if debug:
+            if j%1000 == 0:
+                print 'loop %d/65536, errors count %d' % (j, errors_count.sum())
+        save_end = ()
+        ends = []
+        middle_X = []
+        middle_Y = []
+
+        for i in xrange(piv.shape[0]):
+            finished = False
+            if i == r[-1]:
+                finish = True
+
+            X = (i, piv[i,j])
+            # bad point
+            if np.abs(piv[i,j] - pm[j]) > 3*np.abs(pr[j]):
+                middle_X.append(X)
+            # good point, keep only one good point, save the other end
+            # in case of there is no other good point at the end
+            else:
+                ends.append(X)
+                if len(middle_X) == 0 and len(ends) > 1:
+                    save_end = ends[-2]
+                    ends = [ends[-1]]
+
+            # restore the saved end
+            if finished:
+                ends = save_end + ends
+
+            # interpolate when there are 2 good points and a list of bad points
+            # TODO: Raise exeption when there is only one good point. NO WAY!
+            if len(middle_X) > 0 and len(ends) == 2:
+                middle_Y = interpolate(ends[-2], ends[-1], middle_X)
+                errors_count[i] = errors_count[i] + len(middle_X)
+                for (x, _), y in zip(middle_X, middle_Y):
+                    piv[x,j] = y
+                middle_X = []
+
+    return piv, errors_count
+
+def interpolate(X1, X2, X):
+    """ Interpolate array(X) based on 2 ends X1 and X2
+    X1---X[0]----X[1]----X2--X[2]
+    """
+
+    x1, y1 = X1
+    x2, y2 = X2
+
+    Y = []
+    for x, _ in X:
+        y = 1.*(x-x1)*(y2-y1)/(x2-x1) + y1
+        Y.append(y)
+
+    return Y
+
 # vim:set ts=4 sw=4:
