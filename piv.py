@@ -8,8 +8,9 @@ def piv_to_im(piv):
     im2 = np.empty([256, 256], dtype=np.float32)
 
     for i in xrange(256):
-        im1[i,:] = piv[256*i:256*(i+1),2]
-        im2[i,:] = piv[256*i:256*(i+1),3]
+        # Last 2 colums are u & v, postitions are optional
+        im1[i,:] = piv[256*i:256*(i+1),-2]
+        im2[i,:] = piv[256*i:256*(i+1),-1]
 
     return im1, im2
 
@@ -101,4 +102,4 @@ def interpolate(X1, X2, X):
 
     return Y
 
-# vim:set ts=4 sw=4:
+# vim:set ts=4 sw=4 tw=78:
