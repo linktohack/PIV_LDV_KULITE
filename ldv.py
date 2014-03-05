@@ -4,6 +4,8 @@ import numpy as np
 
 import glob
 
+from lib import waveletrec
+
 def datarate(fn, debug=False):
     """Calculate datarate of file(s) with pattern fn"""
     def _dr(fn):
@@ -104,3 +106,43 @@ def quantities(fi, fo=None, rot=0, off=(), debug=False):
         np.save(fo, [pos, U, k, uvbar])
 
     return pos, U, k, uvbar
+
+def ldv_wavelet_rec(t, sig, fs=2e4, NFFT=4096, stw=0.3):
+    """Reconstruct LDV signal by Wavelet Technique
+    Module used by JAUNET"""
+    nsig1 = sig.shape[1]
+    n1rec = NFFT   
+    ferec = np.float64(fs)
+    
+    nmin = 2
+    
+    stw = np.float64(0.3)
+    erconv = np.float64(1e-3)
+    
+    s1rec = np.empty([n1rec,nsig1], dtype=np.float64, order='F')
+    at1rec = np.arange(n1rec)/ferec
+    
+    n1 = 0
+    for i in xrange(len(t)):
+        if t[i] > at1rec[-1]:
+            n1 = i + 1
+            break
+            
+    at1, s1 = t[:n1], sig[:n1,:]
+    s1moy = sum(s1[:,0])/n1
+    s1[:,0] = s1[:,0] - s1moy
+    
+    dt1 = at1[1:] - at1[:-1]
+    mask = np.where(dt1 > 1/ferec)[0]
+    nfil = len(mask)
+    
+    s2 = np.empty([nfil,nsig1], dtype=np.float64, order='F')
+    at2 = at1[mask]
+    s2[:,0] = s1[mask,0]
+    
+    waveletrec.waveletrecldv(at2, s2, at1rec, s1rec, erconv, stw, nmin, 
+            nn=nfil, nsig=nsig1, nn2=n1rec)
+    
+    return at1rec, s1rec
+
+# vim:set ts=4 sw=4 tw=78:
