@@ -153,6 +153,8 @@ def ldv_wavelet_rec(t, sig, fs=1e5, NFFT=4096, stw=0.3, err=1e-3):
 
             # Next part
             part += 1
+            if n1rec*(part+1) > len(s1rec_all):
+                break
 
     return at1rec_all, s1rec_all
 
