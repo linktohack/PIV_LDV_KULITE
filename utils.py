@@ -25,4 +25,21 @@ def argpeaks(s, deviation=3, lookahead=10, cb=None):
             st = np.delete(st, i)
     return st
 
+def norm_s(sig, Pxx):
+    """Normalize PSD so its integral is equal to the energy"""
+    def norm_s_1d(sig, Pxx):
+        m = np.mean(sig)
+        xcor = np.mean((sig-m)**2)
+        A = np.sum(Pxx)
+
+        A = 2*A/xcor
+        return Pxx/A
+
+    if len(sig.shape) == 1:
+        return norm_s_1d(sig, Pxx)
+    else:
+        for i in sig.shape[1]:
+            Pxx[:,i] = norm_s_1d(sig[:,i], Pxx[i])
+        return Pxx
+
 # vim:set sw=4 ts=4 tw=78:
