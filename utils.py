@@ -19,7 +19,7 @@ def argpeaks(s, deviation=3, lookahead=10, cb=None):
         cb('First try, find the peaks', st)
 
     for i in xrange(st.shape[0]-1, 0, -1):
-        if (st[i] - st[i-1]) < 10:
+        if (st[i] - st[i-1]) < lookahead:
             if cb:
                 cb('Fake peak in st: ', [st[i], st[i-1]])
             st = np.delete(st, i)
