@@ -4,8 +4,6 @@ import numpy as np
 
 import glob
 
-from lib import waveletrec
-
 def datarate(fn, debug=False):
     """Calculate datarate of file(s) with pattern fn"""
     def _dr(fn):
