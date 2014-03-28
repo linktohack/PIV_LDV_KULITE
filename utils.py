@@ -9,23 +9,43 @@ def correlation(a, v):
 
     return np.correlate(a, v, 'same')
 
-def argpeaks(s, deviation=3, lookahead=10, cb=None):
+def argpeaks(s, type='+', deviation=3, lookahead=10, cb=None):
     """Find the peaks of the signal within `deviation`*sigma range,
     exclude the fake signal within `lookahead` range.
+
+    Parameter `type` can be `+` (default, ) `-`, `+-` for positive, negative
+    and both peaks.
 
     Simple version.
     """
     ds = s[1:] - s[:-1]
-    st = np.where(ds > deviation*s.std())[0]
-    if cb:
-        cb('First try, find the peaks', st)
+    sts = []
 
-    for i in xrange(st.shape[0]-1, 0, -1):
-        if (st[i] - st[i-1]) < lookahead:
+    for t in type:
+        if t == '+':
+            st = np.where(ds > deviation*s.std())[0]
             if cb:
-                cb('Fake peak in st: ', [st[i], st[i-1]])
-            st = np.delete(st, i)
-    return st
+                cb('First try, find the peaks', st)
+
+            for i in xrange(st.shape[0]-1, 0, -1):
+                if (st[i] - st[i-1]) < lookahead:
+                    if cb:
+                        cb('Fake peak in st: ', [st[i], st[i-1]])
+                    st = np.delete(st, i)
+            sts.append(st)
+
+        if t == '-':
+            st = np.where(ds < -deviation*s.std())[0]
+            if cb:
+                cb('First try, find the peaks', st)
+
+            for i in xrange(st.shape[0]-1, 0, -1):
+                if (st[i] - st[i-1]) < lookahead:
+                    if cb:
+                        cb('Fake peak in st: ', [st[i], st[i-1]])
+                    st = np.delete(st, i)
+            sts.append(st)
+    return sts
 
 def norm_s(sig, Pxx):
     """Normalize PSD so its integral is equal to the energy"""
