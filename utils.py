@@ -25,24 +25,24 @@ def argpeaks(s, type='+', deviation=3, lookahead=10, cb=None):
         if t == '+':
             st = np.where(ds > deviation*s.std())[0]
             if cb:
-                cb('First try, find the peaks', st)
+                cb('First try, find positive peaks', st)
 
             for i in xrange(st.shape[0]-1, 0, -1):
                 if (st[i] - st[i-1]) < lookahead:
                     if cb:
-                        cb('Fake peak in st: ', [st[i], st[i-1]])
+                        cb('Fake peak detected', [st[i], st[i-1]])
                     st = np.delete(st, i)
             sts.append(st)
 
         if t == '-':
             st = np.where(ds < -deviation*s.std())[0]
             if cb:
-                cb('First try, find the peaks', st)
+                cb('First try, find negative peaks', st)
 
             for i in xrange(st.shape[0]-1, 0, -1):
                 if (st[i] - st[i-1]) < lookahead:
                     if cb:
-                        cb('Fake peak in st: ', [st[i], st[i-1]])
+                        cb('Fake peak detected', [st[i], st[i-1]])
                     st = np.delete(st, i)
             sts.append(st)
     return sts
