@@ -20,7 +20,7 @@ def datarate(fn, debug=False):
             last = np.array(lastline.strip().split('\t')).astype(np.float64)
 
             dr = (last[0] - first[0])/(last[1] - first[1])*1000
-            return pos, dr
+            return { 'pos': pos, 'dr': dr }
 
     fl = sorted(glob.glob(fn))
     if not fl:
@@ -30,17 +30,15 @@ def datarate(fn, debug=False):
             print fl[0]
         return _dr(fl[0])
     else:
-        pos = []
-        dr = []
-
+        dr = {}
         for fn_ in fl:
             if debug:
                 print fn_
-            pos_, dr_ = _dr(fn_)
-            pos.append(pos_)
-            dr.append(dr_)
+            d = _dr(fn_)
+            for k in d.iterkeys():
+                ret.setdefault(k, []).append(d[k])
 
-        return pos, dr
+        return dr
 
 
 def quantities(fi, fo=None, rot=0, off=(), debug=False):
@@ -67,13 +65,24 @@ def quantities(fi, fo=None, rot=0, off=(), debug=False):
             v = lda[:,0]*a2 + lda[:,1]*b2
             U = np.mean((u**2 + v**2)**0.5)
 
-            u = u - u.mean() # ubar, vbar
+            u = u - u.mean() # uprime, vprime
             v = v - v.mean()
 
-            k = (2*(u*u).mean()**0.5 + (v*v).mean()**0.5)/2
-            uvbar = np.abs((u*v).mean())**0.5
 
-            return pos, U, k, uvbar
+            k = (2*(u*u).mean()**0.5 + (v*v).mean()**0.5)/2
+            uv = np.abs((u*v).mean())**0.5
+            u_v = np.abs((u/v).mean())**0.5
+
+            return {
+                      'pos': pos,
+                      'U': U,
+                      'urms': u.std(),
+                      'vrms': v.std(),
+                      'k': k,
+                      'uv': uv,
+                      'u/v': u_v
+                    }
+
 
     fl = sorted(glob.glob(fi))
     if not fl:
@@ -81,28 +90,22 @@ def quantities(fi, fo=None, rot=0, off=(), debug=False):
     if len(fl) < 2:
         if debug:
             print fl[0]
-        pos, U, k, uvbar = _qt(fl[0], rot, off, debug)
+        qt = _qt(fl[0], rot, off, debug)
     else:
-        pos = []
-        U = []
-        k = []
-        uvbar = []
-
+        qt = {}
         for fn_ in fl:
             if debug:
                 print fn_
-            pos_, U_, k_, uvbar_ = _qt(fn_, rot, off, debug)
-            pos.append(pos_)
-            U.append(U_)
-            k.append(k_)
-            uvbar.append(uvbar_)
+            q = _qt(fn_, rot, off, debug)
+            for k in q.iterkeys():
+                ret.setdefault(k, []).append(q[k])
 
     if fo is not None:
         po = fo[:fo.rfind('/')]
         if not os.path.exists(po):
             os.makedirs(po)
-        np.save(fo, [pos, U, k, uvbar])
+        np.save(fo, qt)
 
-    return pos, U, k, uvbar
+    return qt
 
 # vim:set ts=4 sw=4 tw=78:
