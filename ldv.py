@@ -122,10 +122,10 @@ def quantities(fn, rot=0, fit=[450, 50, 25, 10], fit_type=None, cb=None):
         if fit_type == 'ua':
             za = np.argmax(U)
             ua = U[za]
-            popt, pcov = curve_fit(f2, z[za:], U[za:], [50, 25, 10])
+            popt, pcov = curve_fit(f2, z[za:], U[za:], fit)
             popt = np.insert(popt, 0, ua)
         elif fit_type == None:
-            popt, pcov = curve_fit(f, z, U, [450, 50, 25, 10])
+            popt, pcov = curve_fit(f, z, U, fit)
         else:
             raise ValueError("fit_type must be None or 'ua'")
         qt['fit'] = popt
