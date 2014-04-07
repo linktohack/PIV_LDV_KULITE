@@ -90,7 +90,7 @@ def quantities(fn, rot=0, fit=[450, 50, 25, 10], cb=None):
             return {
                       'pos': pos,
                       'U': U,
-                      'su': sv,
+                      'su': su,
                       'sv': sv,
                       'k': k,
                       "u'v'": uv,
