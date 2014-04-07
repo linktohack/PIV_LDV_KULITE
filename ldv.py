@@ -37,6 +37,7 @@ def datarate(fn, cb=None):
         for fn_ in fl:
             if cb:
                 cb('File name', fn_)
+                cb('File num', fl.index(fn_)+1, len(fl))
             d = _dr(fn_)
             for k in d.iterkeys():
                 dr.setdefault(k, []).append(d[k])
@@ -107,6 +108,7 @@ def quantities(fn, rot=0, fit=[450, 50, 25, 10], cb=None):
         for fn_ in fl:
             if cb:
                 cb('File name', fn_)
+                cb('File num', fl.index(fn_)+1, len(fl))
             q = _qt(fn_, rot, cb)
             for k in q.iterkeys():
                 qt.setdefault(k, []).append(q[k])
