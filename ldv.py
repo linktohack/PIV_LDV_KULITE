@@ -36,7 +36,7 @@ def datarate(fn, debug=False):
                 print fn_
             d = _dr(fn_)
             for k in d.iterkeys():
-                ret.setdefault(k, []).append(d[k])
+                dr.setdefault(k, []).append(d[k])
 
         return dr
 
@@ -98,7 +98,7 @@ def quantities(fi, fo=None, rot=0, off=(), debug=False):
                 print fn_
             q = _qt(fn_, rot, off, debug)
             for k in q.iterkeys():
-                ret.setdefault(k, []).append(q[k])
+                qt.setdefault(k, []).append(q[k])
 
     if fo is not None:
         po = fo[:fo.rfind('/')]
