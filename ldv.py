@@ -45,7 +45,7 @@ def datarate(fn, cb=None):
         return dr
 
 
-def quantities(fn, rot=0, fit=[450, 50, 25, 10], cb=None):
+def quantities(fn, rot=0, fit=[450, 50, 25, 10], fit_type=None, cb=None):
     """ Calculate statistical quantities of file(s) with pattern fn
 
     Also try to fit the curve to the erf function with `fit=[ua, ub, yref, dw]`
@@ -116,10 +116,18 @@ def quantities(fn, rot=0, fit=[450, 50, 25, 10], cb=None):
 
         # fit the curve
         f = lambda x, ua, ub, y0, dw: 0.5*(1+erf((np.sqrt(np.pi)/dw)*(-x+y0)))*(ua-ub)+ub
-        # f2 = lambda x, ub, y0, dw: f(x, ua, ub, y0, dw)
+        f2 = lambda x, ub, y0, dw: f(x, ua, ub, y0, dw)
         z = np.array([p[2] for p in qt['pos']])
         U = np.array(qt['U'])
-        popt, pcov = curve_fit(f, z, U, [450, 50, 25, 10])
+        if fit_type == 'ua':
+            za = np.argmax(U)
+            ua = U[za]
+            popt, pcov = curve_fit(f2, z[za:], U[za:], [50, 25, 10])
+            np.insert(popt, 0, ua)
+        elif fit_type == None:
+            popt, pcov = curve_fit(f, z, U, [450, 50, 25, 10])
+        else:
+            raise ValueError("fit_type must be None or 'ua'")
         qt['fit'] = popt
     return qt
 
