@@ -82,7 +82,7 @@ def quantities(fn, rot=0, fit=[450, 50, 25, 10], fit_type=None, cb=None):
             k = (2*np.mean(u**2) + np.mean(v**2))/2
 
             uv = np.abs(np.mean(u*v))
-            
+
             dr = (lda[-1][2]-lda[0][2])/(lda[-1][3]-lda[0][3])*1e3
             if cb:
                 cb('Data rate', dr)
@@ -123,7 +123,7 @@ def quantities(fn, rot=0, fit=[450, 50, 25, 10], fit_type=None, cb=None):
             za = np.argmax(U)
             ua = U[za]
             popt, pcov = curve_fit(f2, z[za:], U[za:], [50, 25, 10])
-            np.insert(popt, 0, ua)
+            popt = np.insert(popt, 0, ua)
         elif fit_type == None:
             popt, pcov = curve_fit(f, z, U, [450, 50, 25, 10])
         else:
