@@ -58,7 +58,7 @@ def quantities(fn, rot=0, fit=[450, 50, 25, 10], cb=None):
             if cb:
                 cb('Position', pos)
 
-            lda = np.loadtxt(fn, skiprows=6, usecols=(3,4), dtype=np.float64)
+            lda = np.loadtxt(fn, skiprows=6, usecols=(3,4,0,1), dtype=np.float64)
             if cb:
                 cb('Number of samples', lda.shape[0])
 
@@ -79,12 +79,14 @@ def quantities(fn, rot=0, fit=[450, 50, 25, 10], cb=None):
             u = u - u.mean()
             v = v - v.mean()
 
-
             k = (2*np.mean(u**2) + np.mean(v**2))/2
 
             uv = np.abs(np.mean(u*v))
             u_v = np.abs(np.mean(u/v))
-
+            
+            dr = (lda[-1][2]-lda[0][2])/(lda[-1][3]-lda[0][3])*1e3
+            if cb:
+                cb('Data rate', dr)
             return {
                       'pos': pos,
                       'U': U,
@@ -92,7 +94,8 @@ def quantities(fn, rot=0, fit=[450, 50, 25, 10], cb=None):
                       'sv': sv,
                       'k': k,
                       "u'v'": uv,
-                      "u'/v'": u_v
+                      "u'/v'": u_v,
+                      'dr': dr
                     }
 
 
