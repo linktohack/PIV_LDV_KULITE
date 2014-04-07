@@ -65,19 +65,25 @@ def quantities(fi, fo=None, rot=0, off=(), debug=False):
             v = lda[:,0]*a2 + lda[:,1]*b2
             U = np.mean((u**2 + v**2)**0.5)
 
-            u = u - u.mean() # uprime, vprime
+            # rms
+            urms = u.std()
+            vrms = v.std()
+
+            # u', v'
+            u = u - u.mean()
             v = v - v.mean()
 
 
-            k = (2*(u*u).mean()**0.5 + (v*v).mean()**0.5)/2
-            uv = np.abs((u*v).mean())**0.5
-            u_v = np.abs((u/v).mean())**0.5
+            k = (2*np.mean(u**2) + np.mean(v**2))/2
+
+            uv = np.abs(np.mean(u*v))
+            u_v = np.abs(np.mean(u/v))
 
             return {
                       'pos': pos,
                       'U': U,
-                      'urms': u.std(),
-                      'vrms': v.std(),
+                      'urms': urms,
+                      'vrms': vrms,
                       'k': k,
                       'uv': uv,
                       'u/v': u_v
