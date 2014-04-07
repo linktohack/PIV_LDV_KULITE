@@ -44,12 +44,12 @@ def datarate(fn, debug=False):
         return dr
 
 
-def quantities(fn, rot=0, off=(), fit=[450, 50, 25, 10], debug=False):
+def quantities(fn, rot=0, fit=[450, 50, 25, 10], debug=False):
     """ Calculate statistical quantities of file(s) with pattern fn
 
     Also try to fit the curve to the erf function with `fit=[ua, ub, yref, dw]`
     """
-    def _qt(fn, rot, off, debug):
+    def _qt(fn, rot, debug):
         """ Calculate statistical quantities of one file"""
         with open(fn, 'r') as f:
             header = [f.next() for _ in xrange(6)]
@@ -101,13 +101,13 @@ def quantities(fn, rot=0, off=(), fit=[450, 50, 25, 10], debug=False):
     if len(fl) < 2:
         if debug:
             print fl[0]
-        qt = _qt(fl[0], rot, off, debug)
+        qt = _qt(fl[0], rot, debug)
     else:
         qt = {}
         for fn_ in fl:
             if debug:
                 print fn_
-            q = _qt(fn_, rot, off, debug)
+            q = _qt(fn_, rot, debug)
             for k in q.iterkeys():
                 qt.setdefault(k, []).append(q[k])
 
