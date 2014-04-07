@@ -7,7 +7,7 @@ from scipy.special import erf
 
 import glob
 
-def datarate(fn, debug=False):
+def datarate(fn, cb=None):
     """Calculate datarate of file(s) with pattern fn"""
     def _dr(fn):
         """Calculate datarate of one file"""
@@ -29,14 +29,14 @@ def datarate(fn, debug=False):
     if not fl:
         raise IOError('File not found! %s' % fn)
     if len(fl) < 2:
-        if debug:
-            print fl[0]
+        if cb:
+            cb('File name', fl[0])
         return _dr(fl[0])
     else:
         dr = {}
         for fn_ in fl:
-            if debug:
-                print fn_
+            if cb:
+                cb('File name', fn_)
             d = _dr(fn_)
             for k in d.iterkeys():
                 dr.setdefault(k, []).append(d[k])
@@ -44,22 +44,22 @@ def datarate(fn, debug=False):
         return dr
 
 
-def quantities(fn, rot=0, fit=[450, 50, 25, 10], debug=False):
+def quantities(fn, rot=0, fit=[450, 50, 25, 10], cb=None):
     """ Calculate statistical quantities of file(s) with pattern fn
 
     Also try to fit the curve to the erf function with `fit=[ua, ub, yref, dw]`
     """
-    def _qt(fn, rot, debug):
+    def _qt(fn, rot, cb):
         """ Calculate statistical quantities of one file"""
         with open(fn, 'r') as f:
             header = [f.next() for _ in xrange(6)]
             pos = np.array(header[3].strip()[:-4].split(' mm;')).astype(np.float64)
-            if debug:
-                print '[x y z] = ', pos
+            if cb:
+                cb('Position', pos)
 
             lda = np.loadtxt(fn, skiprows=6, usecols=(3,4), dtype=np.float64)
-            if debug:
-                print 'Number of samples = ', lda.shape[0]
+            if cb:
+                cb('Number of samples', lda.shape[0])
 
             a1 = np.cos((1./4 - rot/180.)*np.pi)
             a2 = np.sin((1./4 - rot/180.)*np.pi)
@@ -99,15 +99,15 @@ def quantities(fn, rot=0, fit=[450, 50, 25, 10], debug=False):
     if not fl:
         raise IOError(2, 'No such file or directory' % fn)
     if len(fl) < 2:
-        if debug:
-            print fl[0]
-        qt = _qt(fl[0], rot, debug)
+        if cb:
+            cb('File name', fl[0])
+        qt = _qt(fl[0], rot, cb)
     else:
         qt = {}
         for fn_ in fl:
-            if debug:
-                print fn_
-            q = _qt(fn_, rot, debug)
+            if cb:
+                cb('File name', fn_)
+            q = _qt(fn_, rot, cb)
             for k in q.iterkeys():
                 qt.setdefault(k, []).append(q[k])
 
