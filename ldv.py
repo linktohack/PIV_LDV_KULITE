@@ -2,6 +2,9 @@
 import os
 import numpy as np
 
+from scipy.optimize import curve_fit
+from scipy.special import erf
+
 import glob
 
 def datarate(fn, debug=False):
@@ -41,9 +44,12 @@ def datarate(fn, debug=False):
         return dr
 
 
-def quantities(fi, fo=None, rot=0, off=(), debug=False):
+def quantities(fi, fo=None, rot=0, off=(), fit=[450, 50, 25, 10], debug=False):
     """ Calculate statistical quantities of file(s) with pattern fi
-    Optional ouput file can be set to export the data"""
+    Optional ouput file can be set to export the data.
+
+    Also try to fit the curve to the erf function with `fit=[ua, ub, yref, dw]`
+    """
     def _qt(fn, rot, off, debug):
         """ Calculate statistical quantities of one file"""
         with open(fn, 'r') as f:
@@ -106,6 +112,14 @@ def quantities(fi, fo=None, rot=0, off=(), debug=False):
             for k in q.iterkeys():
                 qt.setdefault(k, []).append(q[k])
 
+        # fit the curve
+        f = lambda x, ua, ub, y0, dw: 0.5*(1+erf((np.sqrt(np.pi)/dw)*(-x+y0)))*(ua-ub)+ub
+        # f2 = lambda x, ub, y0, dw: f(x, ua, ub, y0, dw)
+        z = np.array([p[2] for p in qt['pos']])
+        U = np.array(qt['U'])
+        popt, pcov = curve_fit(f, z, U, [450, 50, 25, 10])
+        qt['fit'] = popt
+
     if fo is not None:
         po = fo[:fo.rfind('/')]
         if not os.path.exists(po):
@@ -115,3 +129,4 @@ def quantities(fi, fo=None, rot=0, off=(), debug=False):
     return qt
 
 # vim:set ts=4 sw=4 tw=78:
+
