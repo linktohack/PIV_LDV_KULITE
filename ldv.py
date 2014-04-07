@@ -44,9 +44,8 @@ def datarate(fn, debug=False):
         return dr
 
 
-def quantities(fi, fo=None, rot=0, off=(), fit=[450, 50, 25, 10], debug=False):
-    """ Calculate statistical quantities of file(s) with pattern fi
-    Optional ouput file can be set to export the data.
+def quantities(fn, rot=0, off=(), fit=[450, 50, 25, 10], debug=False):
+    """ Calculate statistical quantities of file(s) with pattern fn
 
     Also try to fit the curve to the erf function with `fit=[ua, ub, yref, dw]`
     """
@@ -96,9 +95,9 @@ def quantities(fi, fo=None, rot=0, off=(), fit=[450, 50, 25, 10], debug=False):
                     }
 
 
-    fl = sorted(glob.glob(fi))
+    fl = sorted(glob.glob(fn))
     if not fl:
-        raise IOError(2, 'No such file or directory' % fi)
+        raise IOError(2, 'No such file or directory' % fn)
     if len(fl) < 2:
         if debug:
             print fl[0]
@@ -119,14 +118,6 @@ def quantities(fi, fo=None, rot=0, off=(), fit=[450, 50, 25, 10], debug=False):
         U = np.array(qt['U'])
         popt, pcov = curve_fit(f, z, U, [450, 50, 25, 10])
         qt['fit'] = popt
-
-    if fo is not None:
-        po = fo[:fo.rfind('/')]
-        if not os.path.exists(po):
-            os.makedirs(po)
-        np.save(fo, qt)
-
     return qt
 
 # vim:set ts=4 sw=4 tw=78:
-
