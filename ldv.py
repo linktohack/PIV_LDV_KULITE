@@ -65,9 +65,9 @@ def quantities(fi, fo=None, rot=0, off=(), debug=False):
             v = lda[:,0]*a2 + lda[:,1]*b2
             U = np.mean((u**2 + v**2)**0.5)
 
-            # rms
-            urms = u.std()
-            vrms = v.std()
+            # std-n (rms), oh fluid dynamic!
+            su = u.std()
+            sv = v.std()
 
             # u', v'
             u = u - u.mean()
@@ -82,11 +82,11 @@ def quantities(fi, fo=None, rot=0, off=(), debug=False):
             return {
                       'pos': pos,
                       'U': U,
-                      'urms': urms,
-                      'vrms': vrms,
+                      'su': sv,
+                      'sv': sv,
                       'k': k,
-                      'uv': uv,
-                      'u/v': u_v
+                      "u'v'": uv,
+                      "u'/v'": u_v
                     }
 
 
