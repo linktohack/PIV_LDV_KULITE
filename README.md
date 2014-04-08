@@ -1,4 +1,6 @@
-phd-data-manipulate
-===================
+PIV_LDV_KULITE
+==============
 
-Some modules to be included in IPython Notebook for my PhD Research
+This repo contains several module to work with PIV, LDV & KULITE system
+
+ vim:set tw=78:
