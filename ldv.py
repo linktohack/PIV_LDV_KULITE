@@ -29,13 +29,13 @@ def datarate(fn, cb=None):
     if not fl:
         raise IOError('File not found! %s' % fn)
     if len(fl) < 2:
-        if cb:
+        if cb is not None:
             cb('File name', fl[0])
         return _dr(fl[0])
     else:
         dr = {}
         for fn_ in fl:
-            if cb:
+            if cb is not None:
                 cb('File name', fn_)
                 cb('File num', fl.index(fn_)+1, len(fl))
             d = _dr(fn_)
@@ -55,11 +55,11 @@ def quantities(fn, rot=0, fit=[450, 50, 25, 10], fit_type='full', cb=None):
         with open(fn, 'r') as f:
             header = [f.next() for _ in xrange(6)]
             pos = np.array(header[3].strip()[:-4].split(' mm;')).astype(np.float64)
-            if cb:
+            if cb is not None:
                 cb('Position', pos)
 
             lda = np.loadtxt(fn, skiprows=6, usecols=(3,4,0,1), dtype=np.float64)
-            if cb:
+            if cb is not None:
                 cb('Number of samples', lda.shape[0])
 
             a1 = np.cos((1./4 - rot/180.)*np.pi)
@@ -84,7 +84,7 @@ def quantities(fn, rot=0, fit=[450, 50, 25, 10], fit_type='full', cb=None):
             uv = np.abs(np.mean(u*v))
 
             dr = (lda[-1][2]-lda[0][2])/(lda[-1][3]-lda[0][3])*1e3
-            if cb:
+            if cb is not None:
                 cb('Data rate', dr)
             return {
                       'pos': pos,
@@ -101,13 +101,13 @@ def quantities(fn, rot=0, fit=[450, 50, 25, 10], fit_type='full', cb=None):
     if not fl:
         raise IOError(2, 'No such file or directory' % fn)
     if len(fl) < 2:
-        if cb:
+        if cb is not None:
             cb('File name', fl[0])
         qt = _qt(fl[0], rot, cb)
     else:
         qt = {}
         for fn_ in fl:
-            if cb:
+            if cb is not None:
                 cb('File name', fn_)
                 cb('File num', fl.index(fn_)+1, len(fl))
             q = _qt(fn_, rot, cb)
