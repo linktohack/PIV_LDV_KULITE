@@ -64,6 +64,21 @@ def norm_s(sig, Pxx):
             Pxx[:,i] = norm_s_1d(sig[:,i], Pxx[i])
         return Pxx
 
+def interpolate(X1, X2, X):
+    """ Interpolate array(X) based on 2 ends X1 and X2
+    X1---X[0]----X[1]----X2--X[2]
+    """
+
+    x1, y1 = X1
+    x2, y2 = X2
+
+    Y = []
+    for x, _ in X:
+        y = 1.*(x-x1)*(y2-y1)/(x2-x1) + y1
+        Y.append(y)
+
+    return Y
+
 def wavelet_rec(t, sig, fs=1e5, NFFT=4096, stw=0.3, err=1e-3):
     """Reconstruct signal by Wavelet Technique
     Module used by JAUNET"""
@@ -140,6 +155,5 @@ def linear_rec(Fs, t, sig):
         X.append(t_rec[i])
         
     return t_rec, sig_rec
-
 
 # vim:set sw=4 ts=4 tw=78:
