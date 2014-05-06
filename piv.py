@@ -3,6 +3,8 @@ import numpy as np
 
 import glob
 
+import utils
+
 def piv_to_im(piv):
     im1 = np.empty([256, 256], dtype=np.float32)
     im2 = np.empty([256, 256], dtype=np.float32)
