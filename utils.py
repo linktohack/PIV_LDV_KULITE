@@ -115,4 +115,31 @@ def wavelet_rec(t, sig, fs=1e5, NFFT=4096, stw=0.3, err=1e-3):
 
     return at1rec_all, s1rec_all
 
+def linear_rec(Fs, t, sig):
+    """Reconstruct signal by Linear Interpolation"""
+    t_rec = np.arange(np.floor(t[-1]*Fs))/Fs
+    sig_rec = np.zeros(t_rec.shape)
+    
+    first = np.where(t_rec<t[1])[0][-1]
+    end = np.where(t_rec>=t[-2])[0][0]
+
+    sig_rec[:first+1] = interpolate((t[0], sig[0]), (t[1], sig[1]), t_rec[:first+1])    
+    sig_rec[end:] = interpolate((t[-2], sig[-2]), (t[-1], sig[-1]), t_rec[end:])
+    
+    j = 1
+    last = first
+    X = []
+    for i in xrange(first, end):
+        if t_rec[i] >= t[j]:
+            sig_rec[last:i] = interpolate((t[j-1], sig[j-1]), (t[j], sig[j]), X)
+            # If the samples too close
+            while t_rec[i] >= t[j]:
+                j += 1
+            last = i
+            X = []
+        X.append(t_rec[i])
+        
+    return t_rec, sig_rec
+
+
 # vim:set sw=4 ts=4 tw=78:
