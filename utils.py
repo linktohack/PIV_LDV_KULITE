@@ -134,13 +134,21 @@ def linear_rec(Fs, t, sig):
     """Reconstruct signal by Linear Interpolation"""
     t_rec = np.arange(np.floor(t[-1]*Fs))/Fs
     sig_rec = np.zeros(t_rec.shape)
-    
-    first = np.where(t_rec<t[1])[0][-1]
-    end = np.where(t_rec>=t[-2])[0][0]
 
-    sig_rec[:first+1] = interpolate((t[0], sig[0]), (t[1], sig[1]), t_rec[:first+1])    
+    first = np.where(t_rec<t[1])[0][-1]
+    last = -2
+    while True:
+        try:
+            end = np.where(t_rec>=t[last])[0][0]
+        except:
+            last -= 1
+            continue
+        else:
+            break
+
+    sig_rec[:first+1] = interpolate((t[0], sig[0]), (t[1], sig[1]), t_rec[:first+1])
     sig_rec[end:] = interpolate((t[-2], sig[-2]), (t[-1], sig[-1]), t_rec[end:])
-    
+
     j = 1
     last = first
     X = []
@@ -153,7 +161,7 @@ def linear_rec(Fs, t, sig):
             last = i
             X = []
         X.append(t_rec[i])
-        
+
     return t_rec, sig_rec
 
 # vim:set sw=4 ts=4 tw=78:
