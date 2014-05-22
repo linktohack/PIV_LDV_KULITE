@@ -81,7 +81,7 @@ def piv_filter_n_sigma(piv, pm, pr, n=3, debug=False):
             # interpolate when there are 2 good points and a list of bad points
             # TODO: Raise exeption when there is only one good point. NO WAY!
             if len(middle_X) > 0 and len(ends) == 2:
-                middle_Y = interpolate(ends[-2], ends[-1], middle_X)
+                middle_Y = interpolate(ends[-2], ends[-1], [x[0] for x in middle_X])
                 errors_count[i] = errors_count[i] + len(middle_X)
                 for (x, _), y in zip(middle_X, middle_Y):
                     piv[x,j] = y

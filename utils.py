@@ -73,7 +73,7 @@ def interpolate(X1, X2, X):
     x2, y2 = X2
 
     Y = []
-    for x, _ in X:
+    for x in X:
         y = 1.*(x-x1)*(y2-y1)/(x2-x1) + y1
         Y.append(y)
 
